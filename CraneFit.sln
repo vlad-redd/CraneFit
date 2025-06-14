@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35122.118
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "CraneFit", "CraneFit.esproj", "{BE7D67D1-C5D7-4979-82A6-F49E0A348335}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BE7D67D1-C5D7-4979-82A6-F49E0A348335}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE7D67D1-C5D7-4979-82A6-F49E0A348335}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE7D67D1-C5D7-4979-82A6-F49E0A348335}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{BE7D67D1-C5D7-4979-82A6-F49E0A348335}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE7D67D1-C5D7-4979-82A6-F49E0A348335}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE7D67D1-C5D7-4979-82A6-F49E0A348335}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E29DC1C5-5890-4E5D-AFAA-C57828B6AF40}
+	EndGlobalSection
+EndGlobal
