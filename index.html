@@ -4,12 +4,56 @@
 <head>
     <meta charset="utf-8" />
     <title></title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        #CraneContainer {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
 </head>
 <body>
+    <div id="CraneContainer">
+        
+    </div>
     <script type="module">
-        import * as CraneFit from "./app.ts"
-        const str = CraneFit.hello()
-        console.log(str)
+        import { CraneFit } from "./app.ts"
+        import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+
+        const container = document.getElementById("CraneContainer")
+        const craneFit = new CraneFit(container)
+        await craneFit.init()
+
+        const crane = craneFit.addCrane()
+
+        
+        //UI
+        function setUI() {
+            const gui = new GUI();
+
+            const craneFolder = gui.addFolder('Crane');
+            const craneControls = {
+                craneWidth: 1,
+                craneHeight: 1,
+                selected: false,
+            };
+
+            craneFolder.add(craneControls, 'craneWidth', 0.5, 2).name('Crane Width').onChange((value) => {
+                crane.craneWidth = value;
+            });
+            craneFolder.add(craneControls, 'craneHeight', 0.5, 2).name('Crane Height').onChange((value) => {
+                crane.craneHeight = value;
+            });
+            craneFolder.add(craneControls, 'selected').name('Selected').onChange((value) => {
+                crane.selected = value;
+            });
+        }
+
+        setUI()
+
     </script>
 </body>
 </html>
