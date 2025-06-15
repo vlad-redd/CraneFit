@@ -22,7 +22,6 @@ export class CraneFit {
 
         //@ts-ignore
         this.openPlans.addCustomObject(crane)
-
         return crane
     }
 
