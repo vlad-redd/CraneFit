@@ -34,6 +34,23 @@
         function setUI() {
             const gui = new GUI();
 
+            const tileFolder = gui.addFolder('Tile');
+            const tileControls = {
+                latitude: 0,
+                longitude: 0,
+                zoom: 16,
+                generateTile: () => {
+                    craneFit.generateTile(tileControls.latitude, tileControls.longitude, tileControls.zoom);
+                },
+            };
+            tileFolder.add(tileControls, 'latitude').name('Latitude').onChange((value) => {
+                tileControls.latitude = value;
+            });
+            tileFolder.add(tileControls, 'longitude').name('Longitude').onChange((value) => {
+                tileControls.longitude = value;
+            });
+            tileFolder.add(tileControls, 'generateTile').name('Generate Tile');
+
             const craneFolder = gui.addFolder('Crane');
             const craneControls = {
                 craneWidth: 1,

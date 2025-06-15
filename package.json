@@ -21,7 +21,7 @@
     "vite": "^6.3.5"
   },
   "dependencies": {
-    "@opengeometry/openplans": "0.0.15",
+    "@opengeometry/openplans": "0.0.16",
     "opengeometry": "^0.0.3"
   }
 }
