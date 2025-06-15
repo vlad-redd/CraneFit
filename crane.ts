@@ -1,9 +1,10 @@
 // Crane.TS test
 // @ts-ignore
-import { BaseCircle, Vector3D } from "@opengeometry/openplans";
+import { BaseCircle, Vector3D, CirclePoly } from "@opengeometry/openplans";
 import { OpenPlans } from "@opengeometry/openplans";
 import { GenericBuilder, IGenericPropertySet } from "@opengeometry/openplans";
 import { PolygonBuilder } from "@opengeometry/openplans";
+
 // import { Glyphs } from "@opengeometry/openglyph";
 import * as THREE from "three";
 
@@ -35,8 +36,9 @@ export class Crane extends GenericBuilder {
     this.propertySet.craneRadius = 20; // Default radius
 
     this.createCraneBody();
-      this.createCraneZone();
-      this.createCraneLabel();
+    this.createCraneZone();
+    this.createCraneLabel();
+    this.createCraneZonePoly();
 
     // Update Geometry based on Event, one or more events can be added
     // this.onPropertyUpdate.add(() => this.createCraneBody());
@@ -63,6 +65,7 @@ export class Crane extends GenericBuilder {
       craneZone.radius = value;
       }
     this.createCraneLabel();
+    this.createCraneZonePoly();
   }
 
   // A Polygon Shape
@@ -96,6 +99,7 @@ export class Crane extends GenericBuilder {
       side: THREE.DoubleSide,
       transparent: true,
       opacity: 0.5,
+      depthTest: false
     });
 
     // @ts-ignore
@@ -106,21 +110,20 @@ export class Crane extends GenericBuilder {
   }
 
     createCraneLabel() {
-        if (this.childNodes.has('tonnageLabel')) {
-            const existingShape = this.childNodes.get('tonnageLabel');
-            existingShape.removeFromParent();
-            this.childNodes.delete('tonnageLabel');            
-        }
-      // Create Label using OpenGlyph
-      console.log(this.openplans )    
+      if (this.childNodes.has('tonnageLabel')) {
+        const existingShape = this.childNodes.get('tonnageLabel');
+        existingShape.removeFromParent();
+        this.childNodes.delete('tonnageLabel');            
+      }
+      // Create Label using OpenGlyph 
       const liftRadius = this.propertySet.craneRadius;
       const liftTonnage = 100 / liftRadius;
 
       const textMesh = this.openplans.glyph(
-          `${liftTonnage.toFixed(1)}tonnes at ${liftRadius.toFixed(1)}m` ,
-          10,
-          0x000000,
-          false
+        `${liftTonnage.toFixed(1)}tonnes at ${liftRadius.toFixed(1)}m` ,
+        10,
+        0x000000,
+        false
       );
 
       textMesh.position.set(0, 0, this.propertySet.craneRadius + 0.5)
@@ -130,7 +133,51 @@ export class Crane extends GenericBuilder {
       this.childNodes.set('tonnageLabel', textMesh)
   }
 
+  createCraneZonePoly() {
+    if (this.childNodes.has('craneZonePoly')) {
+      const existingShape = this.childNodes.get('craneZonePoly');
+      if (existingShape instanceof CirclePoly) {
+        console.log('Removing existing crane zone polygon');
+        console.log(existingShape);
+        existingShape.removeFromParent();
+        existingShape.dispose();
+        this.childNodes.delete('craneZonePoly');
+      }
+    }
+
+    const baseCircle = this.childNodes.get('craneZone');
+    if (!(baseCircle instanceof BaseCircle)) {
+      console.error('Crane zone base circle not found or is not an instance of BaseCircle');
+      return;
+    }
+    const circlePoly = new CirclePoly(baseCircle);
+    circlePoly.geometry.computeVertexNormals();
+    const material = new THREE.MeshStandardMaterial({
+      color: this.propertySet.craneColor,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.2,
+      // wireframe: true
+    });
+    circlePoly.material = material;
+    circlePoly.position.set(0, 0.01, 0);
+    // @ts-ignore
+    this.add(circlePoly);
+    this.childNodes.set('craneZonePoly', circlePoly);
+  }
+
   createCraneZone() {
+    if (this.childNodes.has('craneZonePoly')) {
+      const existingShape = this.childNodes.get('craneZonePoly');
+      if (existingShape instanceof CirclePoly) {
+        // @ts-ignore
+        existingShape.removeFromParent();
+        existingShape.dispose();
+        this.childNodes.delete('craneZonePoly');
+      }
+    }
+
+
     const { craneRadius } = this.propertySet;
     
     const circleArc = new BaseCircle({
@@ -140,11 +187,13 @@ export class Crane extends GenericBuilder {
       startAngle: 0,
       endAngle: Math.PI * 2,
     })
+    circleArc.color = this.propertySet.craneColor;
+
     // @ts-ignore
     this.add(circleArc);
     this.childNodes.set('craneZone', circleArc);
   }
 
-  
+
 }
 

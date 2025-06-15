@@ -12,6 +12,7 @@ export class CraneFit {
 
     constructor(container : HTMLDivElement) {
         this.openPlans = new OpenPlans(container)
+        this.openPlans.showGrid = false;
     }
 
     async init() {
