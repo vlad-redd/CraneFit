@@ -1,8 +1,10 @@
 // Crane.TS test
 // @ts-ignore
 import { BaseCircle, Vector3D } from "@opengeometry/openplans";
+import { OpenPlans } from "@opengeometry/openplans";
 import { GenericBuilder, IGenericPropertySet } from "@opengeometry/openplans";
 import { PolygonBuilder } from "@opengeometry/openplans";
+// import { Glyphs } from "@opengeometry/openglyph";
 import * as THREE from "three";
 
 export type CraneType = 'mobile' | 'tower' | 'crawler';
@@ -22,25 +24,26 @@ export interface ICranePropertySet extends IGenericPropertySet {
 
 
 export class Crane extends GenericBuilder {
-  constructor(config?: ICranePropertySet) {
+  constructor(private openplans: OpenPlans, config?: ICranePropertySet) {
     super(config);
     // this.ogType = 'Crane';
 
     this.propertySet.type = 'crane';
-    this.propertySet.craneWidth = 2; // Default width
-    this.propertySet.craneHeight = 5; // Default height
+    this.propertySet.craneWidth = 2.85; // Default width
+    this.propertySet.craneHeight = 13.85; // Default height
     this.propertySet.craneColor = 0xFF0000; // Default color
     this.propertySet.craneRadius = 20; // Default radius
 
     this.createCraneBody();
-    this.createCraneZone();
+      this.createCraneZone();
+      this.createCraneLabel();
 
     // Update Geometry based on Event, one or more events can be added
     // this.onPropertyUpdate.add(() => this.createCraneBody());
   }
 
   set craneRotation(value: number) {
-    this.builderRotation = value;
+      this.builderRotation = value;
   }
 
   set craneWidth(value: number) {
@@ -58,7 +61,8 @@ export class Crane extends GenericBuilder {
     const craneZone = this.childNodes.get('craneZone');
     if (craneZone instanceof BaseCircle) {
       craneZone.radius = value;
-    }
+      }
+    this.createCraneLabel();
   }
 
   // A Polygon Shape
@@ -79,10 +83,10 @@ export class Crane extends GenericBuilder {
     // const { position } = this.propertySet.dimensions;
 
     points.push(
-      [-craneWidth / 2, 0, -craneHeight / 2], // Bottom left
-      [craneWidth / 2, 0, -craneHeight / 2], // Bottom right
-      [craneWidth / 2, 0, craneHeight / 2], // Top right
-      [-craneWidth / 2, 0, craneHeight / 2] // Top left
+      [-craneWidth / 2, 0, -craneHeight / 2+4], // Bottom left
+      [craneWidth / 2, 0, -craneHeight / 2+4], // Bottom right
+      [craneWidth / 2, 0, craneHeight / 2+4], // Top right
+      [-craneWidth / 2, 0, craneHeight / 2+4] // Top left
     );
 
     const craneShape = new PolygonBuilder();
@@ -101,8 +105,29 @@ export class Crane extends GenericBuilder {
     this.childNodes.set('craneBody', craneShape);
   }
 
-  createCraneLabel() {
-    // Create Label using OpenGlyph
+    createCraneLabel() {
+        if (this.childNodes.has('tonnageLabel')) {
+            const existingShape = this.childNodes.get('tonnageLabel');
+            existingShape.removeFromParent();
+            this.childNodes.delete('tonnageLabel');            
+        }
+      // Create Label using OpenGlyph
+      console.log(this.openplans )    
+      const liftRadius = this.propertySet.craneRadius;
+      const liftTonnage = 100 / liftRadius;
+
+      const textMesh = this.openplans.glyph(
+          `${liftTonnage.toFixed(1)}tonnes at ${liftRadius.toFixed(1)}m` ,
+          10,
+          0x000000,
+          false
+      );
+
+      textMesh.position.set(0, 0, this.propertySet.craneRadius + 0.5)
+
+      // @ts-ignore
+      this.add(textMesh)
+      this.childNodes.set('tonnageLabel', textMesh)
   }
 
   createCraneZone() {

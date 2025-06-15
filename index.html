@@ -36,17 +36,20 @@
 
             const craneFolder = gui.addFolder('Crane');
             const craneControls = {
-                craneWidth: 1,
-                craneHeight: 1,
+                craneRadius: 20,
                 selected: false,
             };
 
-            craneFolder.add(craneControls, 'craneWidth', 0.5, 2).name('Crane Width').onChange((value) => {
-                crane.craneWidth = value;
+            craneFolder.add(craneControls, 'craneRadius', 3, 56).name('Crane Radius').onChange((value) => {
+                crane.craneRadius = value;
             });
-            craneFolder.add(craneControls, 'craneHeight', 0.5, 2).name('Crane Height').onChange((value) => {
-                crane.craneHeight = value;
-            });
+
+            //craneFolder.add(craneControls, 'craneWidth', 0.5, 2).name('Crane Width').onChange((value) => {
+            //    crane.craneWidth = value;
+            //});
+            //craneFolder.add(craneControls, 'craneHeight', 0.5, 2).name('Crane Height').onChange((value) => {
+            //    crane.craneHeight = value;
+            //});
             craneFolder.add(craneControls, 'selected').name('Selected').onChange((value) => {
                 crane.selected = value;
             });

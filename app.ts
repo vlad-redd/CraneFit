@@ -18,7 +18,7 @@ export class CraneFit {
     } 
 
     addCrane() {
-        const crane = new Crane()
+        const crane = new Crane(this.openPlans)
 
         //@ts-ignore
         this.openPlans.addCustomObject(crane)
